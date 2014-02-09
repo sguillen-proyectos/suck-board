@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <title>Suck Board</title>
+</head>
+<body>
+  <canvas id="myCanvas" style="background:#C8C8C8" width="578" height="200"></canvas>
+    <br>
+  <button onclick="sendData(Math.random());">ASD</button>
+  <script src="js/socket.io.js"></script>
+  <script>
+    var socket = io.connect('http://localhost:8080');
+
+    function sendData(text) {
+      socket.emit('data-sent', { my: text });
+    };
+  </script>
+
+  <script>
+      function writeMessage(canvas, message) {
+        var g = canvas.getContext('2d');
+        g.clearRect(0, 0, canvas.width, canvas.height);
+        g.font = '18pt Calibri';
+        g.fillStyle = 'black';
+        g.fillText(message, 10, 25);
+      }
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+      var canvas = document.getElementById('myCanvas');
+      var g = canvas.getContext('2d');
+
+      var down = false;
+      var px, py;
+
+      canvas.addEventListener('mousedown', function(evt) {
+        down = true;
+        var mousePos = getMousePos(canvas, evt);
+        px = mousePos.x;
+        py = mousePos.y;
+        g.moveTo(px,py);
+        var r = {x: px, y: py};
+        socket.emit('init-position', r);
+      });
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        if(down) {
+          g.beginPath();
+          g.lineTo(mousePos.x,mousePos.y);
+          g.lineTo(px,py);
+
+          px = mousePos.x;
+          py = mousePos.y;
+
+          var res = {};
+          res.x = px;
+          res.y = py;
+          socket.emit('data-sent', res);
+
+          g.stroke();
+        }
+      }, false);
+
+      canvas.addEventListener('mouseup', function(evt) {
+        down = false;
+      });
+
+    </script>
+</body>
+</html>

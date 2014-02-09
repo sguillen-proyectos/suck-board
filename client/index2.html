@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <canvas id="myCanvas" style="background:#C8C8C8" width="578" height="200"></canvas>
+
+  <script src="js/socket.io.js"></script>
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var g = canvas.getContext('2d');
+
+    var px, py;
+    var socket = io.connect('http://localhost:8080');
+    socket.on('init-position', function(data) {
+      console.log('INIT!!!!');
+      px = data.x; py = data.y;
+      g.moveTo(px,py);
+    });
+
+    socket.on('draw-data', function(data) {
+      console.log(data.x  + ", " + data.y);
+      drawLine(data.x, data.y);
+    });
+
+    function drawLine(x, y) {
+      console.log('draw');
+      g.beginPath();
+      g.lineTo(x,y);
+      g.lineTo(px,py);
+      g.stroke();
+
+      px = x;
+      py = y;
+    }
+  </script>
+</body>
+</html>

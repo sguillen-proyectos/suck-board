@@ -1,0 +1,18 @@
+{
+  "name": "suck-board",
+  "version": "0.0.0",
+  "description": "PoC application for making a realtime white board",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "whiteboard",
+    "real-time"
+  ],
+  "author": "@donkeysharp",
+  "license": "MIT",
+  "devDependencies": {
+    "socket.io": "~0.9.16"
+  }
+}
